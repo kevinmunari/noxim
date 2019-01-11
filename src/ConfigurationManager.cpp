@@ -68,6 +68,20 @@ void loadConfiguration() {
     GlobalParams::show_buffer_stats = config["show_buffer_stats"].as<bool>();
     GlobalParams::use_winoc = config["use_winoc"].as<bool>();
     GlobalParams::use_powermanager = config["use_wirxsleep"].as<bool>();
+    // Initialize graph configuration parameters (can be set only from configuration file)
+    GlobalParams::channel_node_shape = config["channel_node_shape"].as<string>();
+    GlobalParams::channel_node_regular = config["channel_node_regular"].as<bool>();
+    GlobalParams::channel_node_color = config["channel_node_color"].as<string>();
+    GlobalParams::hub_node_shape = config["hub_node_shape"].as<string>();
+    GlobalParams::hub_node_regular = config["hub_node_regular"].as<bool>();
+    GlobalParams::hub_node_color = config["hub_node_color"].as<string>();
+    GlobalParams::hub_chn_edge_style = config["hub_chn_edge_style"].as<string>();
+    GlobalParams::hub_chn_edge_color = config["hub_chn_edge_color"].as<string>();
+    GlobalParams::tile_node_shape = config["tile_node_shape"].as<string>();
+    GlobalParams::tile_node_regular = config["tile_node_regular"].as<bool>();
+    GlobalParams::tile_node_color = config["tile_node_color"].as<string>();
+    GlobalParams::tile_hub_edge_style = config["tile_hub_edge_style"].as<string>();
+    GlobalParams::tile_hub_edge_color = config["tile_hub_edge_color"].as<string>();
     
 
     set<int> channelSet;
@@ -290,7 +304,7 @@ void checkConfiguration()
     if (GlobalParams::packet_injection_rate <= 0.0 ||
 	GlobalParams::packet_injection_rate > 1.0) {
 	cerr <<
-	    "Error: packet injection rate mmust be in the interval ]0,1]"
+	    "Error: packet injection rate must be in the interval ]0,1]"
 	    << endl;
 	exit(1);
     }
