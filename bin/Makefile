@@ -2,6 +2,7 @@
 
 SYSTEMC := libs/systemc-2.3.1
 YAML    := libs/yaml-cpp
+GRAPHVIZ:= libs/graphviz-2.40.1
 
 
 ##### DIRECTORIES #####
@@ -28,10 +29,10 @@ OPT      := -O3
 OTHER    := -Wall -DSC_NO_WRITE_CHECK --std=c++11 # -Wno-deprecated
 CXXFLAGS := $(OPT) $(OTHER) $(DEBUG)
 
-INCDIR := -I$(SRCDIR) -isystem $(SYSTEMC)/include -I$(YAML)/include
-LIBDIR := -L$(SRCDIR) -L$(SYSTEMC_LIBS) -L$(YAML)/lib
+INCDIR := -I$(SRCDIR) -isystem $(SYSTEMC)/include -I$(YAML)/include -I$(GRAPHVIZ)/build/include/graphviz
+LIBDIR := -L$(SRCDIR) -L$(SYSTEMC_LIBS) -L$(YAML)/lib -L$(GRAPHVIZ)/lib/gvc -L$(GRAPHVIZ)/lib/cgraph
 
-LIBS := -lsystemc -lm -lyaml-cpp 
+LIBS := -lsystemc -lm -lyaml-cpp -lgvc -lcgraph
 
 SPACE := $(subst ,, )
 VPATH := $(SRCDIR):$(subst $(SPACE),:,$(SUBDIRS))
