@@ -163,3 +163,38 @@ traffic_distribution: TRAFFIC_RANDOM
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"
+
+#
+# DECORATIVE & GEOMETRIC GRAPH ATTRIBUTES CONFIGURATION
+#
+#
+# channel node shape (default value: ellipse)
+channel_node_shape: ellipse
+# force channel polygon to be regular (default value: false)
+channel_node_regular: false
+# color of channel node shape (default value: black)
+channel_node_color: blue
+#
+# hub node shape (default value: ellipse)
+hub_node_shape: polygon
+# force hub polygon to be regular (default value: false)
+hub_node_regular: true
+# color of hub node shape (default value: black)
+hub_node_color: blue
+#
+# drawing style (such as bold, dotted, or filled) of hub-channel connection
+hub_chn_edge_style: dashed
+# color of hub-channel connection stroke (default value: black)
+hub_chn_edge_color: black
+#
+# tile node shape (default value: ellipse)
+tile_node_shape: polygon
+# force tile polygon to be regular (default value: false)
+tile_node_regular: true
+# color of tile node shape (default value: black)
+tile_node_color: red
+#
+# drawing style (such as bold, dotted, or filled) of tile-hub connection
+tile_hub_edge_style: filled
+# color of tile-hub connection stroke (default value: black)
+tile_hub_edge_color: lightblue
