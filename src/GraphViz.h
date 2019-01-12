@@ -17,7 +17,7 @@
 
 using namespace std;
 
-GVC_t *gvc;
+GVC_t *graphviz_context;
 Agraph_t *graph;
 map<int, Agnode_t*> channel_node;
 map<int, Agnode_t*> hub_node;
