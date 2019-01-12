@@ -10,11 +10,29 @@
 
 #include "NoC.h"
 
+#include "GraphViz.h"
+
 using namespace std;
 
 void NoC::buildMesh()
 {
-
+    // Set up a Graphviz context
+    graphviz_context = gvContext();
+    
+    // Create the graph
+    char graph_name[16] = "network";
+    graph = agopen(graph_name, Agdirected, 0);
+    
+    // Declaration of attributes' variables
+    char attribute_name[16];
+    char attribute_value[16];
+    char attribute_default_value[16];
+    
+    // Set Graph attribute
+    sprintf(attribute_name, "concentrate");
+    sprintf(attribute_value, "true");
+    sprintf(attribute_default_value, "false");
+    agsafeset(graph, attribute_name, attribute_value, attribute_default_value);
 
     token_ring = new TokenRing("tokenring");
     token_ring->clock(clock);
@@ -29,6 +47,26 @@ void NoC::buildMesh()
         int channel_id = it->first;
         sprintf(channel_name, "Channel_%d", channel_id);
         channel[channel_id] = new Channel(channel_name, channel_id);
+        
+        // Create a Channel node
+        channel_node[channel_id] = agnode(graph, channel_name, 1);
+        // Set Channel node attributes
+        sprintf(attribute_name, "color");
+        sprintf(attribute_value, "%s", GlobalParams::channel_node_color.c_str());
+        sprintf(attribute_default_value, "black");
+        agsafeset(channel_node[channel_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "regular");
+        if (GlobalParams::channel_node_regular == true) {
+            sprintf(attribute_value, "true");
+        } else {
+            sprintf(attribute_value, "false");
+        }
+        sprintf(attribute_default_value, "false");
+        agsafeset(channel_node[channel_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "shape");
+        sprintf(attribute_value, "%s", GlobalParams::channel_node_shape.c_str());
+        sprintf(attribute_default_value, "ellipse");
+        agsafeset(channel_node[channel_id], attribute_name, attribute_value, attribute_default_value);
     }
 
     char hub_name[16];
@@ -44,7 +82,26 @@ void NoC::buildMesh()
         hub[hub_id] = new Hub(hub_name, hub_id,token_ring);
         hub[hub_id]->clock(clock);
         hub[hub_id]->reset(reset);
-
+        
+        // Create a Hub node
+        hub_node[hub_id] = agnode(graph, hub_name, 1);
+        // Set Hub node attributes
+        sprintf(attribute_name, "color");
+        sprintf(attribute_value, "%s", GlobalParams::hub_node_color.c_str());
+        sprintf(attribute_default_value, "black");
+        agsafeset(hub_node[hub_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "regular");
+        if (GlobalParams::hub_node_regular == true) {
+            sprintf(attribute_value, "true");
+        } else {
+            sprintf(attribute_value, "false");
+        }
+        sprintf(attribute_default_value, "false");
+        agsafeset(hub_node[hub_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "shape");
+        sprintf(attribute_value, "%s", GlobalParams::hub_node_shape.c_str());
+        sprintf(attribute_default_value, "ellipse");
+        agsafeset(hub_node[hub_id], attribute_name, attribute_value, attribute_default_value);
 
         // Determine, from configuration file, which Hub is connected to which Tile
         for(vector<int>::iterator iit = hub_config.attachedNodes.begin(); 
@@ -65,6 +122,22 @@ void NoC::buildMesh()
             hub[hub_id]->init[channel_id]->socket.bind(channel[channel_id]->targ_socket);
             //LOG << "Binding " << hub[hub_id]->name() << " to txChannel " << channel_id << endl;
             hub[hub_id]->setFlitTransmissionCycles(channel[channel_id]->getFlitTransmissionCycles(),channel_id);
+            
+            // Create a Hub->Channel connection
+            Agedge_t *edge = agedge(graph, hub_node[hub_id], channel_node[channel_id], 0, 1);
+            // Set Hub->Channel connection attributes
+            sprintf(attribute_name, "color");
+            sprintf(attribute_value, "%s", GlobalParams::hub_chn_edge_color.c_str());
+            sprintf(attribute_default_value, "black");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "style");
+            sprintf(attribute_value, "%s", GlobalParams::hub_chn_edge_style.c_str());
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "tooltip");
+            sprintf(attribute_value, "Hub_%d-Channel_%d", hub_id, channel_id);
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
         }
 
         for(vector<int>::iterator iit = hub_config.rxChannels.begin(); 
@@ -75,6 +148,22 @@ void NoC::buildMesh()
             //LOG << "Binding " << hub[hub_id]->name() << " to rxChannel " << channel_id << endl;
             channel[channel_id]->init_socket.bind(hub[hub_id]->target[channel_id]->socket);
             channel[channel_id]->addHub(hub[hub_id]);
+            
+            // Create a Hub<-Channel connection
+            Agedge_t *edge = agedge(graph, channel_node[channel_id], hub_node[hub_id], 0, 1);
+            // Set Hub<-Channel connection attributes
+            sprintf(attribute_name, "color");
+            sprintf(attribute_value, "%s", GlobalParams::hub_chn_edge_color.c_str());
+            sprintf(attribute_default_value, "black");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "style");
+            sprintf(attribute_value, "%s", GlobalParams::hub_chn_edge_style.c_str());
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "tooltip");
+            sprintf(attribute_value, "Hub_%d-Channel_%d", hub_id, channel_id);
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
         }
 
 	// TODO FIX
@@ -156,6 +245,28 @@ void NoC::buildMesh()
 	    int tile_id = coord2Id(tile_coord);
 	    sprintf(tile_name, "Tile[%02d][%02d]_(#%d)", i, j, tile_id);
 	    t[i][j] = new Tile(tile_name, tile_id);
+		
+        // Create a Tile node
+        char t_name[16];
+        sprintf(t_name, "Tile_%d", tile_id);
+        tile_node[tile_id] = agnode(graph, t_name, 1);
+        // Set Tile node attributes
+        sprintf(attribute_name, "color");
+        sprintf(attribute_value, "%s", GlobalParams::tile_node_color.c_str());
+        sprintf(attribute_default_value, "black");
+        agsafeset(tile_node[tile_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "regular");
+        if (GlobalParams::tile_node_regular == true) {
+            sprintf(attribute_value, "true");
+        } else {
+            sprintf(attribute_value, "false");
+        }
+        sprintf(attribute_default_value, "false");
+        agsafeset(tile_node[tile_id], attribute_name, attribute_value, attribute_default_value);
+        sprintf(attribute_name, "shape");
+        sprintf(attribute_value, "%s", GlobalParams::tile_node_shape.c_str());
+        sprintf(attribute_default_value, "ellipse");
+        agsafeset(tile_node[tile_id], attribute_name, attribute_value, attribute_default_value);
 
 	    // Tell to the router its coordinates
 	    t[i][j]->r->configure(j * GlobalParams::mesh_dim_x + i,
@@ -263,6 +374,45 @@ void NoC::buildMesh()
             hub[hub_id]->req_tx[port](req[i][j].from_hub);
             hub[hub_id]->ack_tx[port](ack[i][j].to_hub);
             hub[hub_id]->buffer_full_status_tx[port](buffer_full_status[i][j].to_hub);
+            
+            // Create a Tile<-Hub connection
+            Agedge_t *edge = agedge(graph, hub_node[hub_id], tile_node[tile_id], 0, 1);
+            // Set Tile<-Hub connection attributes
+            sprintf(attribute_name, "color");
+            sprintf(attribute_value, "%s", GlobalParams::tile_hub_edge_color.c_str());
+            sprintf(attribute_default_value, "black");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "constraint");
+            sprintf(attribute_value, "false");
+            sprintf(attribute_default_value, "true");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "style");
+            sprintf(attribute_value, "%s", GlobalParams::tile_hub_edge_style.c_str());
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "tooltip");
+            sprintf(attribute_value, "Tile_%d<->Hub_%d", tile_id, hub_id);
+            sprintf(attribute_default_value, "");
+            agsafeset(edge, attribute_name, attribute_value, attribute_default_value);
+            // Create a Tile->Hub connection
+            Agedge_t *edge2 = agedge(graph, tile_node[tile_id], hub_node[hub_id], 0, 1);
+            // Set Tile->Hub connection attributes
+            sprintf(attribute_name, "color");
+            sprintf(attribute_value, "%s", GlobalParams::tile_hub_edge_color.c_str());
+            sprintf(attribute_default_value, "black");
+            agsafeset(edge2, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "constraint");
+            sprintf(attribute_value, "false");
+            sprintf(attribute_default_value, "true");
+            agsafeset(edge2, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "style");
+            sprintf(attribute_value, "%s", GlobalParams::tile_hub_edge_style.c_str());
+            sprintf(attribute_default_value, "");
+            agsafeset(edge2, attribute_name, attribute_value, attribute_default_value);
+            sprintf(attribute_name, "tooltip");
+            sprintf(attribute_value, "Tile_%d<->Hub_%d", tile_id, hub_id);
+            sprintf(attribute_default_value, "");
+            agsafeset(edge2, attribute_name, attribute_value, attribute_default_value);
         }
 
         // Map buffer level signals (analogy with req_tx/rx port mapping)
@@ -330,6 +480,23 @@ void NoC::buildMesh()
 	nop_data[GlobalParams::mesh_dim_x][j].west.write(tmp_NoP);
 
     }
+    
+    // Compute a layout using dot layout engine
+    gvLayout(graphviz_context, graph, "dot");
+    
+    // Write the graph on files
+    gvRenderFilename(graphviz_context, graph, "gv", "topology.gv");
+    gvRenderFilename(graphviz_context, graph, "png", "topology.png");
+    gvRenderFilename(graphviz_context, graph, "svg", "topology.svg");
+    
+    // Free layout data
+    gvFreeLayout(graphviz_context, graph);
+    
+    // Free graph structures
+    agclose(graph);
+    
+    // Close output files and free context
+    gvFreeContext(graphviz_context);
 }
 
 Tile *NoC::searchNode(const int id) const
