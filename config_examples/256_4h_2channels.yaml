@@ -161,6 +161,9 @@ traffic_table_filename: "t.txt"
 # DECORATIVE & GEOMETRIC GRAPH ATTRIBUTES CONFIGURATION
 #
 #
+# enable network graph drawing
+use_graphviz: false
+#
 # channel node shape (default value: ellipse)
 channel_node_shape: ellipse
 # force channel polygon to be regular (default value: false)
@@ -186,6 +189,16 @@ tile_node_shape: polygon
 tile_node_regular: true
 # color of tile node shape (default value: black)
 tile_node_color: red
+#
+# drawing style (such as bold, dotted, or filled) of tile[rx]<-tile connection
+tile_rx_tile_edge_style: filled
+# color of tile[rx]<-tile connection stroke (default value: black)
+tile_rx_tile_edge_color: orange
+#
+# drawing style (such as bold, dotted, or filled) of tile[tx]->tile connection
+tile_tx_tile_edge_style: filled
+# color of tile[tx]->tile connection stroke (default value: black)
+tile_tx_tile_edge_color: darkgreen
 #
 # drawing style (such as bold, dotted, or filled) of tile-hub connection
 tile_hub_edge_style: filled
