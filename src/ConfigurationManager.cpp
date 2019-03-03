@@ -68,6 +68,8 @@ void loadConfiguration() {
     GlobalParams::show_buffer_stats = config["show_buffer_stats"].as<bool>();
     GlobalParams::use_winoc = config["use_winoc"].as<bool>();
     GlobalParams::use_powermanager = config["use_wirxsleep"].as<bool>();
+    // Initialize graph configuration parameters (can be overridden with command-line arguments)
+    GlobalParams::use_graphviz = config["use_graphviz"].as<bool>();
     // Initialize graph configuration parameters (can be set only from configuration file)
     GlobalParams::channel_node_shape = config["channel_node_shape"].as<string>();
     GlobalParams::channel_node_regular = config["channel_node_regular"].as<bool>();
@@ -80,6 +82,10 @@ void loadConfiguration() {
     GlobalParams::tile_node_shape = config["tile_node_shape"].as<string>();
     GlobalParams::tile_node_regular = config["tile_node_regular"].as<bool>();
     GlobalParams::tile_node_color = config["tile_node_color"].as<string>();
+    GlobalParams::tile_rx_tile_edge_style = config["tile_rx_tile_edge_style"].as<string>();
+    GlobalParams::tile_rx_tile_edge_color = config["tile_rx_tile_edge_color"].as<string>();
+    GlobalParams::tile_tx_tile_edge_style = config["tile_tx_tile_edge_style"].as<string>();
+    GlobalParams::tile_tx_tile_edge_color = config["tile_tx_tile_edge_color"].as<string>();
     GlobalParams::tile_hub_edge_style = config["tile_hub_edge_style"].as<string>();
     GlobalParams::tile_hub_edge_color = config["tile_hub_edge_color"].as<string>();
     
@@ -193,6 +199,7 @@ void showHelp(char selfname[])
 	 << "\t-vc N\tNumber of virtual channels" << endl
          << "\t-winoc enable radio hub wireless transmission" << endl
          << "\t-wirxsleep enable radio hub wireless power manager" << endl
+         << "\t-graphviz enable network graph drawing" << endl
          << "\t-size Nmin Nmax\tSet the minimum and maximum packet size [flits]" << endl
          << "\t-flit N\tSet the flit size [bit]" << endl
          << "\t-routing TYPE\tSet the routing algorithm to one of the following:" << endl
@@ -427,6 +434,10 @@ void parseCmdLine(int arg_num, char *arg_vet[])
 	    {
 		GlobalParams::use_powermanager = true;
 	    }
+            else if (!strcmp(arg_vet[i], "-graphviz"))
+            {
+		GlobalParams::use_graphviz = true;
+            }
 	    else if (!strcmp(arg_vet[i], "-size")) 
 	    {
 		GlobalParams::min_packet_size = atoi(arg_vet[++i]);
