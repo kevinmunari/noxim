@@ -193,12 +193,12 @@ tile_node_color: red
 # drawing style (such as bold, dotted, or filled) of tile[rx]<-tile connection
 tile_rx_tile_edge_style: filled
 # color of tile[rx]<-tile connection stroke (default value: black)
-tile_rx_tile_edge_color: orange
+tile_rx_tile_edge_color: darkgreen
 #
 # drawing style (such as bold, dotted, or filled) of tile[tx]->tile connection
 tile_tx_tile_edge_style: filled
 # color of tile[tx]->tile connection stroke (default value: black)
-tile_tx_tile_edge_color: darkgreen
+tile_tx_tile_edge_color: orange
 #
 # drawing style (such as bold, dotted, or filled) of tile-hub connection
 tile_hub_edge_style: filled
