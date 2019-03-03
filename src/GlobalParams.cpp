@@ -51,6 +51,7 @@ map<int, HubConfig> GlobalParams::hub_configuration;
 map<int, int> GlobalParams::hub_for_tile;
 PowerConfig GlobalParams::power_configuration;
 // decorative & geometric graph attributes
+bool GlobalParams::use_graphviz;
 string GlobalParams::channel_node_shape;
 bool GlobalParams::channel_node_regular;
 string GlobalParams::channel_node_color;
@@ -62,6 +63,10 @@ string GlobalParams::hub_chn_edge_color;
 string GlobalParams::tile_node_shape;
 bool GlobalParams::tile_node_regular;
 string GlobalParams::tile_node_color;
+string GlobalParams::tile_rx_tile_edge_style;
+string GlobalParams::tile_rx_tile_edge_color;
+string GlobalParams::tile_tx_tile_edge_style;
+string GlobalParams::tile_tx_tile_edge_color;
 string GlobalParams::tile_hub_edge_style;
 string GlobalParams::tile_hub_edge_color;
 // out of yaml configuration
