@@ -172,6 +172,7 @@ struct GlobalParams {
     static map<int, int> hub_for_tile;
     static PowerConfig power_configuration;
     // decorative & geometric graph attributes
+    static bool use_graphviz;
     static string channel_node_shape;
     static bool channel_node_regular;
     static string channel_node_color;
@@ -183,6 +184,10 @@ struct GlobalParams {
     static string tile_node_shape;
     static bool tile_node_regular;
     static string tile_node_color;
+    static string tile_rx_tile_edge_style;
+    static string tile_rx_tile_edge_color;
+    static string tile_tx_tile_edge_style;
+    static string tile_tx_tile_edge_color;
     static string tile_hub_edge_style;
     static string tile_hub_edge_color;
     // out of yaml configuration
