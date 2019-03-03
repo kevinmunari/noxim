@@ -188,7 +188,7 @@ traffic_table_filename: "t.txt"
 #
 #
 # enable network graph drawing
-use_graphviz: true
+use_graphviz: false
 #
 # channel node shape (default value: ellipse)
 channel_node_shape: ellipse
